@@ -1,0 +1,26 @@
+@use 'tokens' as *;
+
+@layer base {
+  html {
+    font-size: 17px; // texte plus grand par défaut pour la lisibilité en extérieur
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply font-sans text-ink antialiased;
+    background: $gradient-page;
+    min-height: 100dvh;
+  }
+
+  h1, h2, h3 {
+    @apply font-extrabold tracking-tight;
+  }
+
+  button {
+    @apply select-none;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-4 ring-brand-400/50;
+  }
+}

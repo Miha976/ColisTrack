@@ -1,0 +1,111 @@
+@use 'tokens' as *;
+
+@layer components {
+  // Cartes
+  .card {
+    @apply rounded-3xl bg-white p-4 shadow-soft;
+  }
+
+  // Boutons : grands, contrastés, faciles à toucher (≥ 56 px)
+  .btn {
+    @apply inline-flex min-h-[3.5rem] items-center justify-center gap-2 rounded-2xl px-5 text-lg font-extrabold transition active:scale-[0.97] disabled:opacity-50;
+
+    &--primary { @apply text-white shadow-pop; background: $gradient-brand; }
+    &--mint    { @apply text-white shadow-soft; background: $gradient-mint; }
+    &--coral   { @apply text-white shadow-coral; background: $gradient-coral; }
+    &--sky     { @apply bg-sky-500 text-white shadow-soft; }
+    &--soft    { @apply bg-brand-100 text-brand-700; }
+    &--danger  { @apply bg-coral-100 text-coral-600; }
+    &--block   { @apply w-full; }
+    &--xl      { @apply min-h-[4.5rem] rounded-3xl text-xl; }
+  }
+
+  .icon-btn {
+    @apply inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-brand-700 shadow-soft active:scale-95;
+  }
+
+  // Badges de taille : le gros colis doit sauter aux yeux
+  .size-badge {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-extrabold;
+
+    &--small  { @apply bg-sky-100 text-sky-500; }
+    &--medium { @apply bg-sun-100 text-amber-700; }
+    &--large  { @apply bg-coral-500 text-white shadow-coral; }
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full bg-brand-50 px-3 py-1 text-sm font-bold text-brand-700;
+  }
+
+  // Onglets segmentés
+  .segmented {
+    @apply grid grid-cols-2 gap-1 rounded-2xl bg-white/70 p-1 shadow-soft;
+
+    &__btn {
+      @apply rounded-xl py-3 text-base font-extrabold text-brand-900/60 transition;
+
+      &--active { @apply bg-brand-600 text-white shadow-pop; }
+    }
+  }
+
+  // Formulaires
+  .input {
+    @apply w-full rounded-2xl border-2 border-brand-100 bg-white px-4 py-4 text-lg font-semibold text-ink shadow-soft placeholder:text-brand-900/30 focus:border-brand-500 focus:outline-none;
+  }
+
+  .label {
+    @apply mb-2 block text-base font-extrabold text-brand-900;
+  }
+
+  // Carte colis
+  .parcel-card {
+    @apply relative flex flex-col gap-3 overflow-hidden rounded-3xl bg-white p-4 shadow-soft transition active:scale-[0.99];
+
+    &--large {
+      @apply ring-4 ring-coral-400;
+    }
+
+    &--done {
+      @apply bg-mint-100/60;
+    }
+
+    &__thumb {
+      @apply flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-brand-50 text-3xl;
+
+      img { @apply h-full w-full object-cover; }
+    }
+  }
+
+  // Bascule (switch)
+  .switch {
+    @apply relative h-9 w-16 shrink-0 rounded-full bg-brand-100 transition;
+
+    &::after {
+      content: '';
+      @apply absolute left-1 top-1 h-7 w-7 rounded-full bg-white shadow transition-transform;
+    }
+
+    &--on {
+      @apply bg-mint-500;
+      &::after { @apply translate-x-7; }
+    }
+  }
+
+  .progress {
+    @apply h-3 w-full overflow-hidden rounded-full bg-white/25;
+
+    &__bar {
+      @apply h-full rounded-full transition-all duration-500;
+      background: $gradient-mint;
+    }
+  }
+
+  .pulse-dot {
+    @apply relative inline-flex h-3 w-3 rounded-full bg-mint-400;
+
+    &::before {
+      content: '';
+      @apply absolute inset-0 animate-ping rounded-full bg-mint-400;
+    }
+  }
+}

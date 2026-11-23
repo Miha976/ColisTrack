@@ -1,0 +1,62 @@
+name: Android APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Build web
+        run: |
+          npm ci
+          npm test
+          npm run build
+
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      - name: Build debug APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Rename APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk ColiTrack.apk
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ColiTrack-apk
+          path: ColiTrack.apk
+
+      # Release "latest" : lien de téléchargement direct depuis le téléphone
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest ColiTrack.apk \
+            --title "ColiTrack (dernière version)" \
+            --notes "APK de test généré automatiquement depuis ${GITHUB_SHA::7}. Sur le téléphone : télécharger ColiTrack.apk puis autoriser l'installation depuis le navigateur." \
+            --prerelease

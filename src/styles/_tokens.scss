@@ -1,0 +1,8 @@
+// Jetons de design partagés par les partiels SCSS
+$nav-height: 5.5rem;
+$safe-bottom: env(safe-area-inset-bottom, 0px);
+$safe-top: env(safe-area-inset-top, 0px);
+$gradient-brand: linear-gradient(135deg, #6c63ff 0%, #5a48f5 45%, #8b5cf6 100%);
+$gradient-mint: linear-gradient(135deg, #2ee6b0 0%, #14c99a 100%);
+$gradient-coral: linear-gradient(135deg, #ff8a6b 0%, #ff6b47 100%);
+$gradient-page: linear-gradient(180deg, #eef0ff 0%, #f3ecff 50%, #e6f8f4 100%);

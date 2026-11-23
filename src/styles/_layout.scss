@@ -1,0 +1,42 @@
+@use 'tokens' as *;
+
+@layer components {
+  .app-shell {
+    @apply mx-auto flex min-h-dvh w-full max-w-2xl flex-col;
+    padding-bottom: calc(#{$nav-height} + #{$safe-bottom} + 1rem);
+  }
+
+  .page {
+    @apply flex flex-1 flex-col gap-5 px-4 pt-4 sm:px-6;
+    padding-top: calc(#{$safe-top} + 1rem);
+  }
+
+  .hero {
+    @apply relative overflow-hidden rounded-4xl p-5 text-white shadow-pop sm:p-7;
+    background: $gradient-brand;
+
+    &::after {
+      content: '';
+      @apply absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10;
+    }
+  }
+
+  .bottom-nav {
+    @apply fixed inset-x-0 bottom-0 z-30 mx-auto flex max-w-2xl items-end justify-around rounded-t-4xl bg-white/90 px-4 pt-2 shadow-pop backdrop-blur-md;
+    height: calc(#{$nav-height} + #{$safe-bottom});
+    padding-bottom: calc(#{$safe-bottom} + 0.6rem);
+
+    &__item {
+      @apply flex min-w-[5rem] flex-col items-center gap-1 rounded-2xl px-3 py-2 text-sm font-bold text-brand-900/50 transition;
+
+      &--active {
+        @apply bg-brand-50 text-brand-600;
+      }
+    }
+
+    &__scan {
+      @apply -mt-10 flex h-20 w-20 flex-col items-center justify-center rounded-full text-xs font-extrabold text-white shadow-coral ring-8 ring-brand-50 transition active:scale-95;
+      background: $gradient-coral;
+    }
+  }
+}

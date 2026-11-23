@@ -1,0 +1,8 @@
+// Point d'entrée : Sass compile les partiels, puis PostCSS/Tailwind traite les directives.
+@use 'base';
+@use 'layout';
+@use 'components';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
