@@ -1,12 +1,11 @@
 import type { Address } from './Address';
 
-export type ParcelSize = 'small' | 'medium' | 'large';
+/** Un colis suivi = un gros colis (le facteur ne saisit que ceux-là). */
 export type ParcelStatus = 'pending' | 'delivered';
 
 export interface Parcel {
   id: string;
   address: Address;
-  size: ParcelSize;
   recipient?: string;
   note?: string;
   /** Miniature JPEG (data URL) pour reconnaître le colis */
@@ -14,14 +13,10 @@ export interface Parcel {
   status: ParcelStatus;
   createdAt: number;
   deliveredAt?: number;
-  /** Horodatage de la dernière alerte de proximité */
+  /** Alerte d'approche (rayon réglable) déjà envoyée */
   notifiedAt?: number;
+  /** Alerte d'arrivée (50 m) déjà envoyée */
+  arrivedNotifiedAt?: number;
 }
 
-export type NewParcel = Pick<Parcel, 'address' | 'size' | 'recipient' | 'note' | 'photo'>;
-
-export const SIZE_META: Record<ParcelSize, { label: string; emoji: string; tone: string }> = {
-  small: { label: 'Petit', emoji: '📦', tone: 'sky' },
-  medium: { label: 'Moyen', emoji: '📦📦', tone: 'sun' },
-  large: { label: 'Gros', emoji: '🚚', tone: 'coral' },
-};
+export type NewParcel = Pick<Parcel, 'address' | 'recipient' | 'note' | 'photo'>;

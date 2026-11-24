@@ -1,10 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { Camera, Keyboard, Loader2, MapPin, Save } from 'lucide-react';
+import { Camera, ImagePlus, Keyboard, Loader2, MapPin, Save } from 'lucide-react';
 import { useAddParcelViewModel } from '@/viewmodels/useAddParcelViewModel';
 import { PageHeader } from '../components/PageHeader';
-import { SizePicker } from '../components/SizePicker';
 
-const STEP_TITLES = { start: 'Nouveau colis', reading: 'Lecture…', address: 'Quelle adresse ?', details: 'Le colis' };
+const STEP_TITLES = { start: 'Nouveau gros colis', reading: 'Lecture…', address: 'Quelle adresse ?', details: 'Dernière étape' };
 
 export function AddParcelPage() {
   const vm = useAddParcelViewModel();
@@ -20,9 +19,12 @@ export function AddParcelPage() {
 
       {vm.step === 'start' && (
         <div className="flex flex-col gap-4">
-          <button className="btn btn--coral btn--xl btn--block h-48 flex-col" onClick={vm.scan}>
-            <Camera size={64} strokeWidth={2} />
+          <button className="btn btn--coral btn--xl btn--block h-44 flex-col" onClick={vm.takePhoto}>
+            <Camera size={60} strokeWidth={2} />
             Photographier l’étiquette
+          </button>
+          <button className="btn btn--primary btn--block" onClick={vm.pickFromGallery}>
+            <ImagePlus size={26} /> Choisir dans la galerie
           </button>
           <button className="btn btn--soft btn--block" onClick={vm.typeManually}>
             <Keyboard size={24} /> Taper l’adresse
@@ -82,11 +84,6 @@ export function AddParcelPage() {
           <div className="card flex items-center gap-3 bg-brand-600 text-white">
             <MapPin size={30} />
             <p className="text-lg font-extrabold leading-tight">{vm.address.label}</p>
-          </div>
-
-          <div>
-            <p className="label">Taille du colis</p>
-            <SizePicker value={vm.size} onChange={vm.setSize} />
           </div>
 
           <div>

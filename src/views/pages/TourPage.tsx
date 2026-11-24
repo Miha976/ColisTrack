@@ -5,7 +5,7 @@ import { EmptyState } from '../components/EmptyState';
 
 export function TourPage() {
   const vm = useTourViewModel();
-  const { total, delivered, remaining, largeLeft } = vm.progress;
+  const { total, delivered, remaining } = vm.progress;
   const percent = total ? Math.round((delivered / total) * 100) : 0;
 
   return (
@@ -13,7 +13,7 @@ export function TourPage() {
       <section className="hero">
         <p className="text-base font-bold text-white/80">Ma tournée du jour</p>
         <p className="mt-1 text-4xl font-black">
-          {remaining} <span className="text-2xl font-extrabold">colis à livrer</span>
+          {remaining} <span className="text-2xl font-extrabold">gros colis à livrer</span>
         </p>
         <div className="progress mt-4">
           <div className="progress__bar" style={{ width: `${percent}%` }} />
@@ -22,15 +22,6 @@ export function TourPage() {
           {delivered} / {total} livrés
         </p>
       </section>
-
-      {largeLeft > 0 && (
-        <div className="flex items-center gap-3 rounded-3xl bg-coral-500 p-4 text-white shadow-coral">
-          <span className="text-3xl">🚚</span>
-          <p className="text-lg font-extrabold leading-tight">
-            {largeLeft} gros colis encore dans le camion
-          </p>
-        </div>
-      )}
 
       <TrackingCard tracking={vm.tracking} error={vm.trackingError} onToggle={vm.toggleTracking} />
 

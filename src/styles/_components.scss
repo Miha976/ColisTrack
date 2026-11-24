@@ -24,15 +24,6 @@
     @apply inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-brand-700 shadow-soft active:scale-95;
   }
 
-  // Badges de taille : le gros colis doit sauter aux yeux
-  .size-badge {
-    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-extrabold;
-
-    &--small  { @apply bg-sky-100 text-sky-500; }
-    &--medium { @apply bg-sun-100 text-amber-700; }
-    &--large  { @apply bg-coral-500 text-white shadow-coral; }
-  }
-
   .chip {
     @apply inline-flex items-center gap-1 rounded-full bg-brand-50 px-3 py-1 text-sm font-bold text-brand-700;
   }
@@ -60,10 +51,6 @@
   // Carte colis
   .parcel-card {
     @apply relative flex flex-col gap-3 overflow-hidden rounded-3xl bg-white p-4 shadow-soft transition active:scale-[0.99];
-
-    &--large {
-      @apply ring-4 ring-coral-400;
-    }
 
     &--done {
       @apply bg-mint-100/60;

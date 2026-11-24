@@ -2,7 +2,6 @@ import { Check, Navigation, RotateCcw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatDistance } from '@/core/geo';
 import type { Parcel } from '@/models/Parcel';
-import { SizeBadge } from './SizeBadge';
 
 interface Props {
   parcel: Parcel;
@@ -15,9 +14,7 @@ interface Props {
 
 export function ParcelCard({ parcel, distance, highlight, onDeliver, onUndo, onNavigate }: Props) {
   const done = parcel.status === 'delivered';
-  const cls = ['parcel-card', parcel.size === 'large' && !done && 'parcel-card--large', done && 'parcel-card--done']
-    .filter(Boolean)
-    .join(' ');
+  const cls = done ? 'parcel-card parcel-card--done' : 'parcel-card';
 
   return (
     <article className={cls}>
@@ -27,16 +24,14 @@ export function ParcelCard({ parcel, distance, highlight, onDeliver, onUndo, onN
         </span>
       )}
       <Link to={`/colis/${parcel.id}`} className={`flex items-center gap-4 ${highlight && !done ? 'pt-5' : ''}`}>
-        <div className="parcel-card__thumb">{parcel.photo ? <img src={parcel.photo} alt="" /> : '📦'}</div>
+        <div className="parcel-card__thumb">{parcel.photo ? <img src={parcel.photo} alt="" /> : '🚚'}</div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-lg font-extrabold leading-tight">{parcel.address.street}</p>
           <p className="truncate text-base font-semibold text-brand-900/60">
             {parcel.address.postcode} {parcel.address.city}
           </p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <SizeBadge size={parcel.size} />
-            {distance != null && !done && <span className="chip">📍 {formatDistance(distance)}</span>}
-          </div>
+          {parcel.recipient && <p className="truncate text-sm font-bold text-brand-700">👤 {parcel.recipient}</p>}
+          {distance != null && !done && <span className="chip mt-2">📍 {formatDistance(distance)}</span>}
         </div>
       </Link>
 

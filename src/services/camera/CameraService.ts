@@ -1,11 +1,14 @@
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 export class CameraService {
-  /** Ouvre l'appareil photo et renvoie l'image en data URL, ou null si annulé. */
-  async takePhoto(): Promise<string | null> {
+  /** Appareil photo ou galerie ; renvoie l'image en data URL, ou null si annulé. */
+  takePhoto = () => this.getImage(CameraSource.Camera);
+  pickFromGallery = () => this.getImage(CameraSource.Photos);
+
+  private async getImage(source: CameraSource): Promise<string | null> {
     try {
       const photo = await Camera.getPhoto({
-        source: CameraSource.Camera,
+        source,
         resultType: CameraResultType.DataUrl,
         quality: 80,
         width: 1600,

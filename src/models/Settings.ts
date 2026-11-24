@@ -1,8 +1,9 @@
 export interface Settings {
-  /** Rayon d'alerte en mètres */
+  /** Rayon de la 1re alerte (approche), en mètres */
   alertRadius: number;
-  /** Alerter seulement pour les gros colis */
-  largeOnly: boolean;
 }
 
-export const DEFAULT_SETTINGS: Settings = { alertRadius: 200, largeOnly: false };
+/** 2e alerte, fixe : le facteur est devant l'adresse. */
+export const ARRIVAL_RADIUS = 50;
+
+export const DEFAULT_SETTINGS: Settings = { alertRadius: 200 };

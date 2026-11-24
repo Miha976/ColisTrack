@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { Trash2 } from 'lucide-react';
+import { BellRing, Trash2 } from 'lucide-react';
 import { RADIUS_OPTIONS, useSettingsViewModel } from '@/viewmodels/useSettingsViewModel';
 import { PageHeader } from '../components/PageHeader';
-import { Switch } from '../components/Switch';
 
 export function SettingsPage() {
   const vm = useSettingsViewModel();
@@ -13,7 +12,7 @@ export function SettingsPage() {
       <PageHeader title="Réglages" />
 
       <section className="card flex flex-col gap-3">
-        <p className="text-lg font-extrabold">Me prévenir à</p>
+        <p className="text-lg font-extrabold">1re alerte : me prévenir à</p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {RADIUS_OPTIONS.map((r) => (
             <button
@@ -26,14 +25,17 @@ export function SettingsPage() {
           ))}
         </div>
         <p className="font-semibold text-brand-900/60">de l’adresse de livraison.</p>
+        <p className="rounded-2xl bg-coral-100 p-3 font-bold text-coral-600">
+          🛑 2e alerte, plus forte, à {vm.arrivalRadius} m : vous êtes devant l’adresse.
+        </p>
       </section>
 
-      <section className="card flex items-center gap-4">
-        <div className="flex-1">
-          <p className="text-lg font-extrabold">Seulement les gros colis</p>
-          <p className="font-semibold text-brand-900/60">Moins d’alertes, pour ne jamais oublier les gros.</p>
-        </div>
-        <Switch checked={vm.settings.largeOnly} onChange={vm.setLargeOnly} label="Seulement les gros colis" />
+      <section className="card flex flex-col gap-3">
+        <p className="text-lg font-extrabold">Sons des alertes</p>
+        <p className="font-semibold text-brand-900/60">Écoutez les deux alertes pour les reconnaître en tournée.</p>
+        <button className="btn btn--mint btn--block" onClick={vm.testAlerts}>
+          <BellRing size={24} /> Tester les alertes
+        </button>
       </section>
 
       <section className="card flex flex-col gap-3">
@@ -48,7 +50,11 @@ export function SettingsPage() {
           }}
         >
           <Trash2 size={22} />
-          {confirm ? 'Toucher encore pour confirmer' : vm.deliveredCount === 1 ? "Effacer le colis livré" : `Effacer les ${vm.deliveredCount} colis livrés`}
+          {confirm
+            ? 'Toucher encore pour confirmer'
+            : vm.deliveredCount === 1
+              ? 'Effacer le colis livré'
+              : `Effacer les ${vm.deliveredCount} colis livrés`}
         </button>
       </section>
     </div>

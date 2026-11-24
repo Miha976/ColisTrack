@@ -16,7 +16,7 @@ export class BackgroundLocationTracker implements LocationTracker {
         backgroundMessage: 'ColiTrack vous prévient à l’approche de vos livraisons.',
         requestPermissions: true,
         stale: false,
-        distanceFilter: 25,
+        distanceFilter: 10 // précision suffisante pour l'alerte à 50 m,
       },
       (location, error) => {
         if (error) {

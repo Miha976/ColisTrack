@@ -4,7 +4,6 @@ import { Check, Navigation, RotateCcw, Trash2 } from 'lucide-react';
 import { formatDistance } from '@/core/geo';
 import { useParcelDetailViewModel } from '@/viewmodels/useParcelDetailViewModel';
 import { PageHeader } from '../components/PageHeader';
-import { SizeBadge } from '../components/SizeBadge';
 
 export function ParcelDetailPage() {
   const { id = '' } = useParams();
@@ -30,12 +29,11 @@ export function ParcelDetailPage() {
       {parcel.photo ? (
         <img src={parcel.photo} alt="Étiquette du colis" className="max-h-64 w-full rounded-4xl object-cover shadow-soft" />
       ) : (
-        <div className="flex h-40 items-center justify-center rounded-4xl bg-brand-100 text-7xl">📦</div>
+        <div className="flex h-40 items-center justify-center rounded-4xl bg-brand-100 text-7xl">🚚</div>
       )}
 
-      <section className={`card flex flex-col gap-3 ${parcel.size === 'large' && !done ? 'ring-4 ring-coral-400' : ''}`}>
+      <section className="card flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <SizeBadge size={parcel.size} />
           {vm.distance != null && <span className="chip">📍 à {formatDistance(vm.distance)}</span>}
           {done && <span className="chip bg-mint-100 text-mint-600">✅ Livré</span>}
         </div>

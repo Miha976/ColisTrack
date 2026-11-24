@@ -29,8 +29,9 @@ export class ParcelStore extends Observable<ParcelState> {
   }
 
   markDelivered = (id: string) => this.update(id, { status: 'delivered', deliveredAt: Date.now() });
-  undoDelivered = (id: string) => this.update(id, { status: 'pending', deliveredAt: undefined, notifiedAt: undefined });
-  setNotified = (id: string, at: number | undefined) => this.update(id, { notifiedAt: at });
+  undoDelivered = (id: string) =>
+    this.update(id, { status: 'pending', deliveredAt: undefined, notifiedAt: undefined, arrivedNotifiedAt: undefined });
+  setNotified = (id: string, flags: Pick<Parcel, 'notifiedAt' | 'arrivedNotifiedAt'>) => this.update(id, flags);
 
   remove = (id: string) => this.commit(this.state.parcels.filter((p) => p.id !== id));
   clearDelivered = () => this.commit(this.state.parcels.filter((p) => p.status !== 'delivered'));

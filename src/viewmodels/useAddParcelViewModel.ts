@@ -3,7 +3,6 @@ import { useServices } from '@/di/ServicesContext';
 import { extractAddressQuery } from '@/core/addressExtractor';
 import { makeThumbnail } from '@/core/image';
 import type { Address } from '@/models/Address';
-import type { ParcelSize } from '@/models/Parcel';
 
 /** Machine à états simple : un seul écran, étapes successives et guidées. */
 export type AddStep = 'start' | 'reading' | 'address' | 'details';
@@ -16,7 +15,6 @@ export function useAddParcelViewModel() {
   const [suggestions, setSuggestions] = useState<Address[]>([]);
   const [searching, setSearching] = useState(false);
   const [address, setAddress] = useState<Address | null>(null);
-  const [size, setSize] = useState<ParcelSize>('medium');
   const [recipient, setRecipient] = useState('');
   const [note, setNote] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -44,9 +42,9 @@ export function useAddParcelViewModel() {
     return () => clearTimeout(timer);
   }, [query, step, geocoding]);
 
-  async function scan() {
+  async function scan(from: 'camera' | 'gallery') {
     setError(null);
-    const dataUrl = await camera.takePhoto();
+    const dataUrl = from === 'camera' ? await camera.takePhoto() : await camera.pickFromGallery();
     if (!dataUrl) return;
     setStep('reading');
     try {
@@ -75,7 +73,6 @@ export function useAddParcelViewModel() {
     if (!address) return null;
     return parcelStore.add({
       address,
-      size,
       photo,
       recipient: recipient.trim() || undefined,
       note: note.trim() || undefined,
@@ -85,8 +82,10 @@ export function useAddParcelViewModel() {
   const back = () => setStep(step === 'details' ? 'address' : 'start');
 
   return {
-    step, photo, query, setQuery, suggestions, searching, address, size, setSize,
+    step, photo, query, setQuery, suggestions, searching, address,
     recipient, setRecipient, note, setNote, error,
-    scan, typeManually, chooseAddress, save, back,
+    takePhoto: () => scan('camera'),
+    pickFromGallery: () => scan('gallery'),
+    typeManually, chooseAddress, save, back,
   };
 }
