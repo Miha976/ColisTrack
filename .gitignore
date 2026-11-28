@@ -7,3 +7,4 @@ android/.gradle
 
 # Photos de test : contiennent de vraies adresses, ne pas publier
 scripts/photos/
+*.traineddata
