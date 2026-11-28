@@ -4,3 +4,6 @@ android/app/build
 android/build
 android/.gradle
 *.tsbuildinfo
+
+# Photos de test : contiennent de vraies adresses, ne pas publier
+scripts/photos/

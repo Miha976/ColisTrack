@@ -1,16 +1,37 @@
-import { readFileSync } from 'node:fs';
-import { extname } from 'node:path';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { dirname, extname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { TesseractOcrStrategy } from '../src/services/ocr/TesseractOcrStrategy';
 import { extractAddressQuery } from '../src/core/addressExtractor';
 
-// process.argv = [chemin de node, chemin de ce script, ...arguments] → les images commencent à l'index 2
-const files = process.argv.slice(2);
-if (!files.length) {
-  console.log('Usage : npx tsx scripts/ocr-test.ts photo1.jpg photo2.png ...');
-  process.exit(1);
+const MIME: Record<string, string> = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.bmp': 'image/bmp' };
+const DEFAULT_DIR = join(dirname(fileURLToPath(import.meta.url)), 'photos');
+
+/** Développe les dossiers en la liste de leurs images (triées par nom). */
+function collect(paths: string[]): string[] {
+  return paths.flatMap((p) => {
+    if (!existsSync(p)) {
+      console.warn(`[introuvable] ${p}`);
+      return [];
+    }
+    return statSync(p).isDirectory()
+      ? readdirSync(p)
+          .filter((f) => MIME[extname(f).toLowerCase()])
+          .sort()
+          .map((f) => join(p, f))
+      : [p];
+  });
 }
 
-const MIME: Record<string, string> = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.bmp': 'image/bmp' };
+// process.argv = [node, ce script, ...arguments]. Sans argument : toutes les images de scripts/photos
+const args = process.argv.slice(2);
+const files = collect(args.length ? args : [DEFAULT_DIR]);
+if (!files.length) {
+  console.log(`Aucune image trouvée. Mettez vos photos dans ${DEFAULT_DIR} ou passez des fichiers/dossiers en argument.`);
+  process.exit(1);
+}
+console.log(`${files.length} image(s) à analyser…`);
+
 const ocr = new TesseractOcrStrategy();
 
 for (const file of files) {
