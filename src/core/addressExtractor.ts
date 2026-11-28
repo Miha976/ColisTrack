@@ -1,28 +1,52 @@
-const POSTCODE_CITY = /\b(\d{5})\s+([A-ZÀ-Ÿa-zà-ÿ' -]{2,})/;
-const STREET_HINT = /\b(\d{1,4}\s*(bis|ter)?\s*,?\s*)?(rue|avenue|av\.?|bd|boulevard|chemin|ch\.?|impasse|all[ée]e|place|route|rte|quai|cours|lotissement|lot\.?|r[ée]sidence|square|voie)\b/i;
+const LETTERS = 'A-Za-zÀ-ÖØ-öø-ÿ';
+const POSTCODE_CITY = new RegExp(`(?:^|\\s)(\\d{5})\\s+([${LETTERS}][${LETTERS}' -]{1,})`);
+const STREET_HINT = new RegExp(
+  `\\b(rue|avenue|av|bd|boulevard|chemin|ch|impasse|all[ée]e|place|pl|route|rte|quai|cours|lotissement|lot|` +
+    `r[ée]sidence|r[ée]s|square|voie|cit[ée]|hameau|lieu[- ]dit|quartier|village|faubourg|fg|parc|domaine|zone|za|zi|zac)\\b`,
+  'i',
+);
+const STREET_NUMBER = /^\d{1,4}\s*(bis|ter|[a-d])?\b/i;
+const PERSON_LINE = /^(m|mr|mme|mlle|mme et m|mr et mme|m et mme|monsieur|madame)\b\.?/i;
+const LONG_DIGITS = /\d{7,}/; // codes de suivi, codes-barres
+
+/** Retire les caractères parasites et les fragments de fin de ligne (bords d'étiquette, ombres…). */
+function clean(line: string): string {
+  let l = line.replace(/[|_~*«»"“”‘’\[\]{}<>]/g, ' ').replace(/\s+/g, ' ').trim();
+  // fragments finaux typiques : "k", "ai", "f.", ponctuation isolée
+  while (/\s([a-z]{1,2}\.?|[^\sA-Za-zÀ-ÿ0-9]+)$/.test(l)) l = l.replace(/\s\S+$/, '');
+  return l.replace(/[.,;:]+$/, '').trim();
+}
+
+const isStreet = (l: string) => STREET_HINT.test(l) || STREET_NUMBER.test(l);
 
 /**
- * Extrait la meilleure requête d'adresse à partir d'un texte OCR brut.
- * Heuristique française : on cherche la ligne "CP Ville" et la ligne de voie qui la précède.
+ * Extrait la meilleure requête d'adresse à partir d'un texte OCR brut (heuristique française).
+ * Toutes les lignes "CP Ville" candidates sont notées ; la plus plausible gagne (à égalité, la plus basse,
+ * le destinataire étant en général sous l'expéditeur).
  */
 export function extractAddressQuery(raw: string): string | null {
-  const lines = raw
-    .split(/\r?\n/)
-    .map((l) => l.replace(/[|_~*«»]/g, ' ').replace(/\s+/g, ' ').trim())
-    .filter((l) => l.length > 2);
+  const lines = raw.split(/\r?\n/).map(clean).filter((l) => l.length > 2);
 
-  const cpIndex = lines.findIndex((l) => POSTCODE_CITY.test(l));
-  if (cpIndex === -1) {
-    const street = lines.find((l) => STREET_HINT.test(l));
-    return street ?? null;
+  let best: { score: number; index: number; cpCity: string } | null = null;
+  lines.forEach((line, index) => {
+    const m = line.match(POSTCODE_CITY);
+    if (!m) return;
+    const city = m[2].replace(/\s+\S{0,2}$/, '').trim();
+    const before = lines.slice(Math.max(0, index - 2), index);
+    let score = 0;
+    if (line.startsWith(m[1])) score += 3; // "03700 BELLERIVE…" plutôt que "… 02856 DD 510550"
+    if (before.some(isStreet)) score += 3;
+    if (city.length >= 3) score += 1;
+    if (LONG_DIGITS.test(line)) score -= 4;
+    if (/\d/.test(line.slice(line.indexOf(m[2])))) score -= 1; // chiffres après la ville
+    if (!best || score >= best.score) best = { score, index, cpCity: `${m[1]} ${city}` };
+  });
+
+  if (!best) return lines.find((l) => STREET_HINT.test(l)) ?? null;
+  const { index, cpCity } = best as { index: number; cpCity: string };
+
+  for (let i = index - 1; i >= Math.max(0, index - 2); i--) {
+    if (isStreet(lines[i]) && !PERSON_LINE.test(lines[i])) return `${lines[i]} ${cpCity}`;
   }
-
-  const cpLine = lines[cpIndex].match(POSTCODE_CITY)!;
-  const cpCity = `${cpLine[1]} ${cpLine[2].trim()}`;
-
-  // La voie est généralement sur l'une des 2 lignes précédentes
-  for (let i = cpIndex - 1; i >= Math.max(0, cpIndex - 2); i--) {
-    if (STREET_HINT.test(lines[i]) || /^\d{1,4}\s/.test(lines[i])) return `${lines[i]} ${cpCity}`;
-  }
-  return cpIndex > 0 ? `${lines[cpIndex - 1]} ${cpCity}` : cpCity;
+  return cpCity;
 }
