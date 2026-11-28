@@ -21,6 +21,7 @@ dans `android/app/src/main/res/raw/`.
 npm install
 npm run dev            # navigateur (GPS au premier plan uniquement)
 npm test               # tests unitaires (géo, extraction d'adresse)
+npm run ocr -- photos/*  # affiche le texte lu par l'OCR sur vos images
 npm run android        # build + sync + ouvre Android Studio
 ```
 Prérequis Android : Android Studio, JDK 21, appareil Android 8+.

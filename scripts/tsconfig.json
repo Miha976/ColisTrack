@@ -1,0 +1,9 @@
+{
+  // Config TypeScript des scripts Node (hors appli) : types Node au lieu des types navigateur/Vite
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["ES2022", "DOM"]
+  },
+  "include": ["./**/*.ts"]
+}
